@@ -22,7 +22,7 @@ dependencies {
 	implementation("org.projectlombok:lombok:1.18.18")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("org.springframework.boot:spring-boot-starter-web:2.5.3")
-	implementation("org.springframework.data:spring-data-mongodb:3.2.3")
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.3")
 	compileOnly("org.projectlombok:lombok:0.11.0")
 
 

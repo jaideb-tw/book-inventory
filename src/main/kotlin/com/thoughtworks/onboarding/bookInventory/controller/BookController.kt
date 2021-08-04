@@ -12,13 +12,13 @@ class BookController(
 ) {
 
     @GetMapping("/fetchAll")
-    fun fetchAllBooks(): List<Book>? {
+    fun fetchAll(): List<Book>? {
         val bookList = bookService.fetchAll();
         return bookList
     }
 
     @PostMapping("/save")
-    fun addBooks(@RequestBody book:Book){
-        bookService.saveBooks(book)
+    fun addBooks(@RequestBody book: Book) {
+        bookService.save(book)
     }
 }
