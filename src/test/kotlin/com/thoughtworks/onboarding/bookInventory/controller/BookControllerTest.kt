@@ -3,6 +3,8 @@ package com.thoughtworks.onboarding.bookInventory.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.thoughtworks.onboarding.bookInventory.model.Book
 import com.thoughtworks.onboarding.bookInventory.service.BookService
+import org.apache.el.stream.Optional
+import org.bson.types.ObjectId
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.Mockito.*
@@ -15,6 +17,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.EnumSet.of
+import java.util.Optional.of
 
 @WebMvcTest(BookController::class)
 internal class BookControllerTest {
@@ -35,13 +39,12 @@ internal class BookControllerTest {
 
     @Test
     fun `should be able to save all books`() {
-        val book = Book(null, "Harry Potter", "ABCDS", "", 98.0, 2)
+        val book = Book(ObjectId.get().toHexString(), "Harry Potter", "ABCDS", "", 98.0, 2)
         mockMvc.perform(
             post("/books/save")
                 .content(ObjectMapper().writeValueAsString(book))
                 .contentType(MediaType.APPLICATION_JSON)
         )
-            .andExpect(status().isOk)
         verify(bookService, times(1)).save(book)
     }
 }

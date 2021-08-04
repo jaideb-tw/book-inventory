@@ -7,14 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class BookService(@Autowired val bookRepository: BookRepository) {
+class BookService {
+
+    @Autowired
+    lateinit var bookRepository: BookRepository
 
     fun fetchAll(): List<Book>? {
         return bookRepository.findAll().toList()
     }
 
-    fun save(book: Book) {
+    fun save(book: Book):Book {
         book.id = ObjectId.get().toHexString()
-        bookRepository.save(book)
+        return bookRepository.save(book)
     }
 }
