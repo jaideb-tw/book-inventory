@@ -20,7 +20,7 @@ internal class BookServiceTest {
     lateinit var bookService: BookService
 
     @AfterEach
-    fun cleanDataBase(){
+    fun cleanDataBase() {
         bookRepository.deleteAll()
     }
 
@@ -30,11 +30,9 @@ internal class BookServiceTest {
         val anotherBook = Book(ObjectId.get().toHexString(), "JAVA", "ABCDS", "", 98.0, 2)
         val bookList = ArrayList<Book>()
         bookRepository.save(book)
-        bookRepository.save(anotherBook)
         bookList.add(book)
-        bookList.add(anotherBook)
 
-        val returnedList = bookService.fetchAll()
+        val returnedList = bookService.fetchAll(null, null)
         Assertions.assertEquals(bookList, returnedList)
 
     }
@@ -43,9 +41,9 @@ internal class BookServiceTest {
     fun `should be able to save book`() {
         val book = Book(ObjectId.get().toHexString(), "Harry Potter", "ABCDS", "", 98.0, 2)
 
-        val savedBook=bookService.save(book);
+        val savedBook = bookService.save(book);
 
-        Assertions.assertEquals(savedBook,book)
+        Assertions.assertEquals(savedBook, book)
 
     }
 }

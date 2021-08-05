@@ -34,7 +34,7 @@ internal class BookControllerTest {
         mockMvc.perform(
             get("/books/fetchAll")
         ).andExpect(status().isOk)
-        verify(bookService, times(1)).fetchAll()
+        verify(bookService, times(1)).fetchAll(null, null)
     }
 
     @Test

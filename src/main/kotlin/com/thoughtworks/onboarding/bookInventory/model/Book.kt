@@ -1,7 +1,6 @@
 package com.thoughtworks.onboarding.bookInventory.model
 
 
-import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
@@ -9,10 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class Book(
     @Id
     var id: String?,
-    val title: String,
-    val author: String?,
-    val description: String?,
-    val price: Double,
-    val quantity: Int?
+    var title: String?,
+    var author: String?,
+    var description: String?,
+    var price: Double?,
+    var quantity: Int?
 ) {
 }
