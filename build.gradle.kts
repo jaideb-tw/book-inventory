@@ -24,6 +24,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web:2.5.3")
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.3")
 	compileOnly("org.projectlombok:lombok:0.11.0")
+	implementation( "org.springframework.boot:spring-boot-starter-webflux")
 
 
 
