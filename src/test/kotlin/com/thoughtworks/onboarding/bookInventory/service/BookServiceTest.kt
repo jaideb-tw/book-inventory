@@ -27,7 +27,7 @@ internal class BookServiceTest {
     @Test
     fun `should be able to fetch all books`() {
         val book = Book(ObjectId.get().toHexString(), "Harry Potter", "ABCDS", "", 98.0, 2)
-        val anotherBook = Book(ObjectId.get().toHexString(), "JAVA", "ABCDS", "", 98.0, 2)
+        Book(ObjectId.get().toHexString(), "JAVA", "ABCDS", "", 98.0, 2)
         val bookList = ArrayList<Book>()
         bookRepository.save(book)
         bookList.add(book)

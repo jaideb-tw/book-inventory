@@ -13,5 +13,4 @@ data class Book(
     var description: String?,
     var price: Double?,
     var quantity: Int?
-) {
-}
+)

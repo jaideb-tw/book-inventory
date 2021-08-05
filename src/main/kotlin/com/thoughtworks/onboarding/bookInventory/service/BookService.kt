@@ -27,7 +27,7 @@ class BookService {
     }
 
     fun update(id: String, book: Book): Book? {
-        var updatedBook: Book? = null;
+        var updatedBook: Book? = null
         val bookFound = bookRepository.findById(id)
         when {
             bookFound.isPresent -> {
