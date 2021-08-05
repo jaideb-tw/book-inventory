@@ -2,6 +2,7 @@ package com.thoughtworks.onboarding.bookInventory.controller
 
 import com.thoughtworks.onboarding.bookInventory.model.Book
 import com.thoughtworks.onboarding.bookInventory.responce.BookResponse
+import com.thoughtworks.onboarding.bookInventory.service.BookDto
 import com.thoughtworks.onboarding.bookInventory.service.BookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -56,7 +57,7 @@ class BookController(
     @GetMapping("/search")
     fun search(
         @RequestParam(required = false) title: String?,
-        ): Any {
+    ): ResponseEntity<BookDto> {
 
         return ResponseEntity.status(HttpStatus.OK).body(bookService.search(title))
     }
