@@ -11,11 +11,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 
 @Service
-class BookService {
-
-    @Autowired
-    lateinit var bookRepository: BookRepository
-
+class BookService(private val bookRepository: BookRepository) {
 
     @Autowired
     lateinit var webClient: WebClient
@@ -45,10 +41,7 @@ class BookService {
         return updatedBook
     }
 
-    private fun updateQuantityAndPrice(
-        bookFound: Optional<Book>,
-        book: Book,
-    ) {
+    private fun updateQuantityAndPrice(bookFound: Optional<Book>, book: Book) {
         bookFound.get().price = book.price
         bookFound.get().quantity = book.quantity
     }
@@ -61,20 +54,21 @@ class BookService {
     }
 
     fun search(title: String?, count: Optional<Int>): List<BookDto>? {
-        if (count.isPresent && count.get() <= 0) {
-            return null
+        return when {
+            count.isPresent && count.get() <= 0 -> null
+            else -> webClient.get()
+                .uri {
+                    it
+                        .queryParam("q", title)
+                        .queryParamIfPresent("maxResults", count)
+                        .build()
+                }
+                .retrieve()
+                .bodyToMono(GoogleBookResponse::class.java)
+                .map { it.items }
+                .block()
+                ?.map { BookDto.from(it.volumeInfo, it.saleInfo) }
         }
-
-        return webClient.get()
-
-            .uri {
-                it.queryParam("q", title).queryParamIfPresent("maxResults", count).build()
-            }
-            .retrieve()
-            .bodyToMono(GoogleBookResponse::class.java)
-            .map { it.items }
-            .block()
-            ?.map { BookDto.from(it.volumeInfo, it.saleInfo) }
     }
 }
 
