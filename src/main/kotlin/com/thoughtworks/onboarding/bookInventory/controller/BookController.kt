@@ -2,14 +2,13 @@ package com.thoughtworks.onboarding.bookInventory.controller
 
 import com.thoughtworks.onboarding.bookInventory.model.Book
 import com.thoughtworks.onboarding.bookInventory.responce.BookResponse
-import com.thoughtworks.onboarding.bookInventory.service.BookDto
+import com.thoughtworks.onboarding.bookInventory.model.BookDto
 import com.thoughtworks.onboarding.bookInventory.service.BookService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
+import java.util.*
 
 @RestController
 @RequestMapping("/books")
@@ -56,9 +55,9 @@ class BookController(
 
     @GetMapping("/search")
     fun search(
-        @RequestParam(required = false) title: String?,
-    ): ResponseEntity<BookDto> {
-
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.search(title))
+        @RequestParam title: String?, @RequestParam(required = false) count: Optional<Int>
+    ): ResponseEntity<List<BookDto>> {
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.search(title, count))
     }
+
 }
