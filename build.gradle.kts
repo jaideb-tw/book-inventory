@@ -25,7 +25,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.5.3")
 	compileOnly("org.projectlombok:lombok:0.11.0")
 	implementation( "org.springframework.boot:spring-boot-starter-webflux")
-
+	implementation("org.springframework.kafka:spring-kafka")
+	implementation("org.apache.kafka:kafka-streams")
 
 
 }

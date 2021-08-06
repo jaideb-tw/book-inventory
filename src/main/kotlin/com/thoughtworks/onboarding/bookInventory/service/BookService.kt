@@ -1,11 +1,15 @@
 package com.thoughtworks.onboarding.bookInventory.service
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.thoughtworks.onboarding.bookInventory.model.Book
 import com.thoughtworks.onboarding.bookInventory.model.BookDto
+import com.thoughtworks.onboarding.bookInventory.model.BookEvent
+import com.thoughtworks.onboarding.bookInventory.model.EventType
 import com.thoughtworks.onboarding.bookInventory.repository.BookRepository
 import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
@@ -15,6 +19,11 @@ class BookService(private val bookRepository: BookRepository) {
 
     @Autowired
     lateinit var webClient: WebClient
+
+    var topicName: String = "book-inventory"
+
+    @Autowired
+    lateinit var kafkaTemplate: KafkaTemplate<String, Any>
 
     fun fetchAll(title: String?, author: String?): List<Book>? {
         return when {
@@ -26,7 +35,9 @@ class BookService(private val bookRepository: BookRepository) {
 
     fun save(book: Book): Book? {
         book.id = ObjectId.get().toHexString()
-        return bookRepository.save(book)
+        val savedBook = bookRepository.save(book)
+        publishEvent(book, EventType.ADD)
+        return savedBook
     }
 
     fun update(id: String, book: Book): Book? {
@@ -38,18 +49,18 @@ class BookService(private val bookRepository: BookRepository) {
                 updatedBook = bookRepository.save(bookFound.get())
             }
         }
+        if (updatedBook != null) {
+            publishEvent(updatedBook, EventType.UPDATE)
+        }
         return updatedBook
-    }
-
-    private fun updateQuantityAndPrice(bookFound: Optional<Book>, book: Book) {
-        bookFound.get().price = book.price
-        bookFound.get().quantity = book.quantity
     }
 
     fun delete(id: String): Book? {
         val bookToBeDeleted = bookRepository.findById(id)
-        if (bookToBeDeleted.isPresent)
+        if (bookToBeDeleted.isPresent) {
             bookRepository.deleteById(id)
+            publishEvent(bookToBeDeleted.get(), EventType.DELETE)
+        }
         return bookToBeDeleted.orElse(null)
     }
 
@@ -69,6 +80,16 @@ class BookService(private val bookRepository: BookRepository) {
                 .block()
                 ?.map { BookDto.from(it.volumeInfo, it.saleInfo) }
         }
+    }
+
+    private fun updateQuantityAndPrice(bookFound: Optional<Book>, book: Book) {
+        bookFound.get().price = book.price
+        bookFound.get().quantity = book.quantity
+    }
+
+    private fun publishEvent(book: Book, eventType: EventType) {
+        val bookEvent = BookEvent.from(book, eventType)
+        kafkaTemplate.send(topicName, ObjectMapper().writeValueAsString(bookEvent))
     }
 }
 
