@@ -35,8 +35,57 @@ internal class BookControllerTest {
     }
 
     @Test
+    fun `should be able to fetch all books matching with title`() {
+        val bookDto = Book(null, "Java", "", "",54.9,9)
+        val anotherBookDto = Book(null, "Java for beginners", "", "",545.6,9)
+        val bookList = ArrayList<Book>()
+
+        bookList.add(bookDto)
+        bookList.add(anotherBookDto)
+        `when`(bookService.fetchAll("Java",null)).thenReturn(bookList)
+        mockMvc.perform(
+            get("/books/fetchAll")
+                .param("title","Java")
+        ).andExpect(status().isOk)
+        verify(bookService, times(1)).fetchAll("Java", null)
+    }
+
+    @Test
+    fun `should be able to fetch all books matching with author`() {
+        val bookDto = Book(null, "Java", "Joshua Bloch", "",54.9,9)
+        val anotherBookDto = Book(null, "Java for beginners", "Joshua", "",545.6,9)
+        val bookList = ArrayList<Book>()
+
+        bookList.add(bookDto)
+        bookList.add(anotherBookDto)
+        `when`(bookService.fetchAll("Java",null)).thenReturn(bookList)
+        mockMvc.perform(
+            get("/books/fetchAll")
+                .param("author","Joshua")
+        ).andExpect(status().isOk)
+        verify(bookService, times(1)).fetchAll(null, "Joshua")
+    }
+
+    @Test
+    fun `should be able to fetch all books matching with Title and author`() {
+        val bookDto = Book(null, "Java", "Joshua Bloch", "",54.9,9)
+        val anotherBookDto = Book(null, "Java for beginners", "Joshua", "",545.6,9)
+        val bookList = ArrayList<Book>()
+
+        bookList.add(bookDto)
+        bookList.add(anotherBookDto)
+        `when`(bookService.fetchAll("Java",null)).thenReturn(bookList)
+        mockMvc.perform(
+            get("/books/fetchAll")
+                .param("title","Java")
+                .param("author","Joshua")
+        ).andExpect(status().isOk)
+        verify(bookService, times(1)).fetchAll("Java", "Joshua")
+    }
+
+    @Test
     fun `should be able to save all books`() {
-        val book = Book(ObjectId.get().toHexString(), "Harry Potter", "ABCDS", "", 98.0, 2)
+        val book = Book(ObjectId.get().toHexString(), "Harry Potter", "ABCD", "", 98.0, 2)
         mockMvc.perform(
             post("/books/save")
                 .content(ObjectMapper().writeValueAsString(book))
@@ -78,7 +127,8 @@ internal class BookControllerTest {
 
         `when`(bookService.search("Java", Optional.empty())).thenReturn(bookDtoList)
         mockMvc.perform(
-            get("/books/search/").param("title", "Java")
+            get("/books/search/")
+                .param("title", "Java")
         ).andExpect(status().isOk)
         verify(bookService, times(1)).search("Java", Optional.empty())
     }
